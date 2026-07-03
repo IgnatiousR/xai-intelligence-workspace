@@ -22,7 +22,11 @@ export default function WowCanvas({
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%" }}
     >
-      <MorphingPointCloud wowProgress={wowProgress} containerRef={containerRef} />
+      <MorphingPointCloud
+        wowProgress={wowProgress}
+        containerRef={containerRef}
+        sharedPositionsRef={sharedPositions}
+      />
       <WowConnectionLines sourcePositions={sharedPositions} />
     </Canvas>
   );

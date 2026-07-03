@@ -2,6 +2,7 @@ import { shaderMaterial } from "@react-three/drei";
 import { extend } from "@react-three/fiber";
 import * as THREE from "three";
 
+// fallow-ignore-next-line unused-export
 export const MorphCloudMaterial = shaderMaterial(
   { uDpr: 1, uTime: 0, uMouse: new THREE.Vector2() },
   /* vertex */
@@ -21,7 +22,7 @@ export const MorphCloudMaterial = shaderMaterial(
       p += normalize(p + .001) * sin(uTime * .7 + length(p) * 2.) * .03;
       vec4 mv = modelViewMatrix * vec4(p, 1.);
       gl_Position = projectionMatrix * mv;
-      gl_PointSize = max(size * uDpr * (220. / -mv.z), 1.);
+      gl_PointSize = clamp(size * uDpr * (24. / -mv.z), 1., 14.);
       vA = .65 + push * .35;
     }
   `,
@@ -32,13 +33,21 @@ export const MorphCloudMaterial = shaderMaterial(
     void main() {
       float d = length(gl_PointCoord - vec2(.5));
       if (d > .5) discard;
-      float glow = exp(-d * 4.5);
-      float core = smoothstep(.5, .04, d);
-      vec3 col = mix(vC, vec3(1.), core * .35);
-      gl_FragColor = vec4(col, (glow * .45 + core * .55) * vA);
+      
+
+      // after — crisper dots, less blown-out on overlap
+      float glow = exp(-d * 6.0);
+      float core = smoothstep(.5, .1, d);
+      vec3 col = mix(vC, vec3(1.), core * .25);
+      gl_FragColor = vec4(col, (glow * .35 + core * .3) * vA);
     }
-  `
+  `,
 );
+
+// float glow = exp(-d * 4.5);
+//       float core = smoothstep(.5, .04, d);
+//       vec3 col = mix(vC, vec3(1.), core * .35);
+//       gl_FragColor = vec4(col, (glow * .45 + core * .55) * vA);
 
 extend({ MorphCloudMaterial });
 

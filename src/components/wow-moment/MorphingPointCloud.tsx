@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useMemo, type RefObject } from "react";
+import { useRef, useMemo, type RefObject, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointer } from "@/hooks/usePointer";
+import { updateParticleMaterial } from "@/lib/updateParticleMaterial";
 
 const WN = 700;
 const eps = 0.0001;
@@ -19,11 +20,13 @@ const rndColor = Float32Array.from({ length: WN }, () => Math.random());
 interface MorphingPointCloudProps {
   wowProgress: RefObject<number>;
   containerRef: RefObject<HTMLElement | null>;
+  sharedPositionsRef: RefObject<Float32Array>;
 }
 
 export default function MorphingPointCloud({
   wowProgress,
   containerRef,
+  sharedPositionsRef,
 }: MorphingPointCloudProps) {
   const pointsRef = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
@@ -69,7 +72,7 @@ export default function MorphingPointCloud({
         const c = new THREE.Color().lerpColors(
           new THREE.Color("#c8ff00"),
           new THREE.Color("#ebebeb"),
-          rndColor[i] * 0.55
+          rndColor[i] * 0.55,
         );
         col[i * 3] = c.r;
         col[i * 3 + 1] = c.g;
@@ -86,8 +89,13 @@ export default function MorphingPointCloud({
 
   const positions = useMemo(
     () => Float32Array.from(sphereTargets),
-    [sphereTargets]
+    [sphereTargets],
   );
+
+  // Sync shared positions after render, not during it
+  useEffect(() => {
+    sharedPositionsRef.current = positions;
+  }, [positions, sharedPositionsRef]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -136,25 +144,23 @@ export default function MorphingPointCloud({
     }
     geo.attributes.position.needsUpdate = true;
 
-    if (materialRef.current) {
-      materialRef.current.uDpr = Math.min(state.gl.getPixelRatio(), 2);
-      materialRef.current.uTime = t;
-      materialRef.current.uMouse.set(pointer.current.x, pointer.current.y);
-    }
-
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y = t * 0.12 + pointer.current.x * 0.3;
-      pointsRef.current.rotation.x = pointer.current.y * 0.15;
-    }
+    updateParticleMaterial({
+      materialRef,
+      pointsRef,
+      state,
+      t,
+      pointerX: pointer.current.x,
+      pointerY: pointer.current.y,
+      rotationSpeedY: 0.12,
+      pointerInfluenceY: 0.3,
+      pointerInfluenceX: 0.15,
+    });
   });
 
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
         <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
       </bufferGeometry>

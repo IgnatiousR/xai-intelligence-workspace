@@ -33,9 +33,9 @@ export default function DashboardWindow() {
       {/* Title bar */}
       <div className="h-10 border-b border-bdr flex items-center px-4 gap-2">
         <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-critical" />
           <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-success" />
         </div>
         <div className="flex-1 text-center">
           <span className="text-fg-m text-[11px] font-body">
@@ -44,7 +44,7 @@ export default function DashboardWindow() {
         </div>
       </div>
 
-      <div className="flex h-[500px]">
+      <div className="flex h-150">
         <Sidebar active={sidebar} onActiveChange={setSidebar} />
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Metric cards - only on overview */}

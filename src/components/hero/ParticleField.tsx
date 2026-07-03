@@ -4,6 +4,7 @@ import { useRef, useMemo, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointer } from "@/hooks/usePointer";
+import { updateParticleMaterial } from "@/lib/updateParticleMaterial";
 
 const N = 1600;
 
@@ -84,16 +85,14 @@ export default function ParticleField({
     }
     geo.attributes.position.needsUpdate = true;
 
-    if (materialRef.current) {
-      materialRef.current.uDpr = Math.min(state.gl.getPixelRatio(), 2);
-      materialRef.current.uTime = t;
-      materialRef.current.uMouse.set(pointer.current.x, pointer.current.y);
-    }
-
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y = t * 0.04 + pointer.current.x * 0.12;
-      pointsRef.current.rotation.x = pointer.current.y * 0.06;
-    }
+    updateParticleMaterial({
+      materialRef,
+      pointsRef,
+      state,
+      t,
+      pointerX: pointer.current.x,
+      pointerY: pointer.current.y,
+    });
   });
 
   return (

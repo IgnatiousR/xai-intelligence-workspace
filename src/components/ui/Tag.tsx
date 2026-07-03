@@ -25,4 +25,5 @@ const Tag = forwardRef<HTMLSpanElement, TagProps>(
 Tag.displayName = "Tag";
 
 export { Tag };
+// fallow-ignore-next-line unused-type
 export type { TagProps };

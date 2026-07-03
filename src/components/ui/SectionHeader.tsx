@@ -30,4 +30,5 @@ const SectionHeader = forwardRef<HTMLDivElement, SectionHeaderProps>(
 SectionHeader.displayName = "SectionHeader";
 
 export { SectionHeader };
+// fallow-ignore-next-line unused-type
 export type { SectionHeaderProps };

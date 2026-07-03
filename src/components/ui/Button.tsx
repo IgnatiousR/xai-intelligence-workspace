@@ -29,4 +29,5 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button };
+// fallow-ignore-next-line unused-type
 export type { ButtonProps };

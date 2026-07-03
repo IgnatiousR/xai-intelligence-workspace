@@ -26,9 +26,9 @@ export default function WowConnectionLines({
     if (!p) return;
 
     for (let i = 0; i < WLN; i++) {
-      let bA = 0,
-        bB = 1,
-        bD = 99;
+      let bA = -1,
+        bB = -1,
+        bD = 1.1; // MAX_DIST inlined as before
       for (let t = 0; t < 12; t++) {
         const a = (Math.random() * WN) | 0;
         const b = (Math.random() * WN) | 0;
@@ -37,12 +37,15 @@ export default function WowConnectionLines({
         const dy = p[a * 3 + 1] - p[b * 3 + 1];
         const dz = p[a * 3 + 2] - p[b * 3 + 2];
         const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (d < bD && d < 1.1) {
+        if (d < bD) {
           bD = d;
           bA = a;
           bB = b;
         }
       }
+
+      if (bA === -1) continue;
+
       linePositions[i * 6] = p[bA * 3];
       linePositions[i * 6 + 1] = p[bA * 3 + 1];
       linePositions[i * 6 + 2] = p[bA * 3 + 2];
@@ -54,7 +57,6 @@ export default function WowConnectionLines({
       lineGeo.current.attributes.position.needsUpdate = true;
     }
   });
-
   return (
     <lineSegments>
       <bufferGeometry ref={lineGeo}>

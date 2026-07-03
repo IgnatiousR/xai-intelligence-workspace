@@ -2,6 +2,7 @@ import { shaderMaterial } from "@react-three/drei";
 import { extend } from "@react-three/fiber";
 import * as THREE from "three";
 
+// fallow-ignore-next-line unused-export
 export const ParticleFieldMaterial = shaderMaterial(
   { uDpr: 1, uMouse: new THREE.Vector2(), uTime: 0 },
   /* vertex */

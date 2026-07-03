@@ -31,9 +31,9 @@ export default function ConnectionLines({
     if (!p) return;
 
     for (let i = 0; i < LN; i++) {
-      let bA = 0,
-        bB = 1,
-        bD = 99;
+      let bA = -1,
+        bB = -1,
+        bD = MAX_DIST;
       for (let t = 0; t < SAMPLES; t++) {
         const a = (Math.random() * N) | 0;
         const b = (Math.random() * N) | 0;
@@ -42,12 +42,15 @@ export default function ConnectionLines({
         const dy = p[a * 3 + 1] - p[b * 3 + 1];
         const dz = p[a * 3 + 2] - p[b * 3 + 2];
         const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (d < bD && d < MAX_DIST) {
+        if (d < bD) {
           bD = d;
           bA = a;
           bB = b;
         }
       }
+
+      if (bA === -1) continue; // no valid pair this pass — leave previous (or zero) segment alone
+
       linePositions[i * 6] = p[bA * 3];
       linePositions[i * 6 + 1] = p[bA * 3 + 1];
       linePositions[i * 6 + 2] = p[bA * 3 + 2];
