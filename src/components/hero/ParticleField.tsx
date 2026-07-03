@@ -7,6 +7,13 @@ import { usePointer } from "@/hooks/usePointer";
 
 const N = 1600;
 
+// Pre-compute random values at module scope to avoid Math.random() during render
+const rndX = Float32Array.from({ length: N }, () => Math.random());
+const rndY = Float32Array.from({ length: N }, () => Math.random());
+const rndZ = Float32Array.from({ length: N }, () => Math.random());
+const rndSize = Float32Array.from({ length: N }, () => Math.random());
+const rndColor = Float32Array.from({ length: N }, () => Math.random());
+
 interface ParticleFieldProps {
   heroProgress: RefObject<number>;
   sharedPositions: RefObject<Float32Array>;
@@ -17,7 +24,7 @@ export default function ParticleField({
   sharedPositions,
 }: ParticleFieldProps) {
   const pointsRef = useRef<THREE.Points>(null);
-  const materialRef = useRef<any>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
   const pointer = usePointer();
 
   const { randPositions, gridPositions, sizes, colors } = useMemo(() => {
@@ -37,12 +44,12 @@ export default function ParticleField({
       grid[i * 3 + 1] = (iy - gridSide / 2) * 0.32;
       grid[i * 3 + 2] = (iz - gridSide / 2) * 0.32;
 
-      rand[i * 3] = (Math.random() - 0.5) * 14;
-      rand[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      rand[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      rand[i * 3] = (rndX[i] - 0.5) * 14;
+      rand[i * 3 + 1] = (rndY[i] - 0.5) * 14;
+      rand[i * 3 + 2] = (rndZ[i] - 0.5) * 10;
 
-      sz[i] = Math.random() * 2.5 + 0.6;
-      const c = new THREE.Color().lerpColors(dim, accent, Math.random() * 0.35);
+      sz[i] = rndSize[i] * 2.5 + 0.6;
+      const c = new THREE.Color().lerpColors(dim, accent, rndColor[i] * 0.35);
       col[i * 3] = c.r;
       col[i * 3 + 1] = c.g;
       col[i * 3 + 2] = c.b;

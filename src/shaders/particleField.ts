@@ -47,3 +47,11 @@ declare module "@react-three/fiber" {
     particleFieldMaterial: Record<string, unknown>;
   }
 }
+
+declare module "three" {
+  interface ShaderMaterial {
+    uDpr: number;
+    uTime: number;
+    uMouse: THREE.Vector2;
+  }
+}

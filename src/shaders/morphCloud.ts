@@ -48,3 +48,11 @@ declare module "@react-three/fiber" {
     morphCloudMaterial: Record<string, unknown>;
   }
 }
+
+declare module "three" {
+  interface ShaderMaterial {
+    uDpr: number;
+    uTime: number;
+    uMouse: THREE.Vector2;
+  }
+}

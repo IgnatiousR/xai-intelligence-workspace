@@ -8,6 +8,14 @@ import { usePointer } from "@/hooks/usePointer";
 const WN = 700;
 const eps = 0.0001;
 
+// Pre-compute random values at module scope to avoid Math.random() during render
+const rndCubeX = Float32Array.from({ length: WN }, () => Math.random());
+const rndCubeY = Float32Array.from({ length: WN }, () => Math.random());
+const rndCubeZ = Float32Array.from({ length: WN }, () => Math.random());
+const rndTorusU = Float32Array.from({ length: WN }, () => Math.random());
+const rndSize = Float32Array.from({ length: WN }, () => Math.random());
+const rndColor = Float32Array.from({ length: WN }, () => Math.random());
+
 interface MorphingPointCloudProps {
   wowProgress: RefObject<number>;
   containerRef: RefObject<HTMLElement | null>;
@@ -18,7 +26,7 @@ export default function MorphingPointCloud({
   containerRef,
 }: MorphingPointCloudProps) {
   const pointsRef = useRef<THREE.Points>(null);
-  const materialRef = useRef<any>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
   const pointer = usePointer(containerRef);
 
   const { sphereTargets, cubeTargets, torusTargets, sizes, colors } =
@@ -39,9 +47,9 @@ export default function MorphingPointCloud({
         sphere[i * 3 + 2] = r * Math.cos(phi);
 
         // Cube surface
-        let cx = (Math.random() - 0.5) * 4;
-        let cy = (Math.random() - 0.5) * 4;
-        let cz = (Math.random() - 0.5) * 4;
+        const cx = (rndCubeX[i] - 0.5) * 4;
+        const cy = (rndCubeY[i] - 0.5) * 4;
+        const cz = (rndCubeZ[i] - 0.5) * 4;
         const mc = Math.max(Math.abs(cx), Math.abs(cy), Math.abs(cz), eps);
         const s = 1.9 / mc;
         cube[i * 3] = cx * s;
@@ -51,17 +59,17 @@ export default function MorphingPointCloud({
         // Torus knot
         const tt = (i / WN) * Math.PI * 2 * 5;
         const tr2 = 1.7;
-        const tu = 0.55 + Math.random() * 0.1;
+        const tu = 0.55 + rndTorusU[i] * 0.1;
         const tw = 3;
         torus[i * 3] = (tr2 + tu * Math.cos(tw * tt)) * Math.cos(tt);
         torus[i * 3 + 1] = (tr2 + tu * Math.cos(tw * tt)) * Math.sin(tt);
         torus[i * 3 + 2] = tu * Math.sin(tw * tt);
 
-        sz[i] = Math.random() * 2.8 + 0.8;
+        sz[i] = rndSize[i] * 2.8 + 0.8;
         const c = new THREE.Color().lerpColors(
           new THREE.Color("#c8ff00"),
           new THREE.Color("#ebebeb"),
-          Math.random() * 0.55
+          rndColor[i] * 0.55
         );
         col[i * 3] = c.r;
         col[i * 3 + 1] = c.g;

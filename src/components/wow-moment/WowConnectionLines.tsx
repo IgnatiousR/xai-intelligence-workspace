@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useMemo, type RefObject } from "react";
+import { useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 const WLN = 250;
 const WN = 700;
+const linePositions = new Float32Array(WLN * 6);
 
 interface WowConnectionLinesProps {
   sourcePositions: RefObject<Float32Array>;
@@ -16,8 +17,6 @@ export default function WowConnectionLines({
 }: WowConnectionLinesProps) {
   const lineGeo = useRef<THREE.BufferGeometry>(null);
   const frameCount = useRef(0);
-
-  const linePositions = useMemo(() => new Float32Array(WLN * 6), []);
 
   useFrame(() => {
     frameCount.current++;

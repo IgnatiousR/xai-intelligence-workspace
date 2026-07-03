@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, type RefObject } from "react";
+import { useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -8,6 +8,7 @@ const LN = 180;
 const N = 1600;
 const MAX_DIST = 0.8; // reduced from 1.3 to avoid long visible lines
 const SAMPLES = 18;
+const linePositions = new Float32Array(LN * 6);
 
 interface ConnectionLinesProps {
   sourcePositions: RefObject<Float32Array>;
@@ -21,8 +22,6 @@ export default function ConnectionLines({
   const lineGeo = useRef<THREE.BufferGeometry>(null);
   const lineMat = useRef<THREE.LineBasicMaterial>(null);
   const frameCount = useRef(0);
-
-  const linePositions = useMemo(() => new Float32Array(LN * 6), []);
 
   useFrame(() => {
     frameCount.current++;
