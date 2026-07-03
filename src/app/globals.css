@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Colors — from xai.html :root and Tailwind config */
+  --color-bg: #06060a;
+  --color-bg-el: #0e0e14;
+  --color-fg: #ebebeb;
+  --color-fg-m: #6e6e7a;
+  --color-accent: #c8ff00;
+  --color-accent-d: #8ab300;
+  --color-card: #111118;
+  --color-bdr: #1c1c28;
+
+  /* Semantic (from design_xai.md, used in dashboard status pills/dots) */
+  --color-critical: #ff5f57;
+  --color-info: #5ba8ff;
+  --color-success: #28c840;
+
+  /* Fonts */
+  --font-display: var(--font-display), 'Space Grotesk', sans-serif;
+  --font-body: var(--font-body), 'DM Sans', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ---- Global element styles ported from xai.html <style> ---- */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-bdr); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-fg-m); }
+
+/* Gradient headline text — xai.html .grad-text */
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--color-fg) 30%, var(--color-accent) 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* CTA glow — xai.html .accent-glow */
+.shadow-accent-glow {
+  box-shadow: 0 0 40px rgba(200, 255, 0, .12), 0 0 80px rgba(200, 255, 0, .04);
+}
+
+/* Animated conic-gradient border on hover — xai.html .bgrad */
+.border-gradient-hover {
+  position: relative;
+  overflow: hidden;
+}
+.border-gradient-hover::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from 180deg, transparent, var(--color-accent), transparent 40%);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .5s ease;
+  animation: spin-border 4s linear infinite;
+}
+.border-gradient-hover:hover::before { opacity: 1; }
+@keyframes spin-border { to { transform: rotate(360deg); } }
+
+/* Noise overlay — xai.html body::after */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: .4;
+}
+
+@keyframes pulse-soft { 0%, 100% { opacity: .35; } 50% { opacity: .85; } }
+.animate-pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
+
+@keyframes float-dot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.animate-float-dot { animation: float-dot 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
 }

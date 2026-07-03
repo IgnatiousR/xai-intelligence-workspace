@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Xai — Intelligence Workspace
 
-## Getting Started
+## Overview
 
-First, run the development server:
+A modern landing page for an AI-powered intelligence platform, demonstrating the journey from raw data through structured analysis to actionable insights and autonomous automation. Built as a component-based Next.js 16 application, converting a single 1067-line static HTML file into a fully modular React architecture.
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router, `src/` directory)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4 (CSS-first config via `@theme`)
+- **3D**: React Three Fiber + drei (two WebGL particle scenes)
+- **Animation**: GSAP + ScrollTrigger (scroll-driven), Motion/Framer Motion (UI transitions)
+- **Fonts**: Space Grotesk (display) + DM Sans (body) via `next/font/google`
+
+## Running Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx          # Root layout, fonts, metadata
+│   ├── page.tsx            # Composes all sections
+│   └── globals.css         # Tailwind v4 @theme tokens + global styles
+├── components/
+│   ├── hero/               # R3F particle field scene
+│   ├── insight-flow/       # 3-stage data pipeline with Canvas2D
+│   ├── dashboard/          # Mock product UI with charts
+│   ├── wow-moment/         # R3F morphing point cloud
+│   ├── layout/             # Navbar, Footer, CursorGlow
+│   └── ui/                 # Button, Tag, SectionHeader
+├── hooks/                  # Shared React hooks
+├── lib/                    # Utilities (cn, gsap registration)
+├── shaders/                # GLSL shader definitions
+└── data/                   # Typed mock data
+```
 
-## Learn More
+## Animation & Interaction Decisions
 
-To learn more about Next.js, take a look at the following resources:
+The project uses three animation libraries, each chosen for its specific strength:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Tool | Use Case | Why |
+|------|----------|-----|
+| **Motion** | Hero entrance stagger, tab crossfades, progress bars, layout animations | Mount-triggered, declarative, React-idiomatic. `variants` + `staggerChildren` for sequenced reveals. `AnimatePresence` for tab content. `layoutId` for sliding underline. |
+| **GSAP + ScrollTrigger** | Section header/block scroll reveals, WOW scroll-scrubbed morph | Position-in-viewport triggered. ScrollTrigger's `start`/`end` viewport percentages match the original's exact thresholds. `scrub: true` provides smooth 0-1 progress tied to scroll position. |
+| **R3F `useFrame`** | Hero particle morph, WOW point cloud morph, all per-frame shader updates | Continuous, GPU-bound work. Position arrays mutated directly in typed arrays, never via React state. `dpr={[1,2]}` caps render resolution on high-DPI displays. |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Key principle**: Per-frame values live in refs (read imperatively). Discrete state changes use React/Motion state. This prevents 60fps re-renders while keeping declarative UI clean.
 
-## Deploy on Vercel
+## Performance Considerations
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Both R3F `<Canvas>` components are loaded via `next/dynamic` with `ssr: false`
+- Particle counts: Hero = 1600 points, WOW = 700 points
+- Canvas2D visualizations use `ResizeObserver` for responsive redraw
+- All typed-array buffers are computed once via `useMemo`
+- `prefers-reduced-motion` is respected — CursorGlow listener skipped, ambient drift paused
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Responsive Design
+
+Desktop-first with responsive breakpoints preserved from the original:
+- `sm:` — Hero type scale, table column visibility
+- `md:` — Dashboard sidebar visibility, additional table columns
+- `lg:` — Stage block grid layout, metric card grid
+
+Note: The two R3F WebGL scenes are GPU-intensive on mobile devices. Consider reducing particle counts or capping `dpr` to `1` on mobile for optimal performance.
+
+## License
+
+Private — XAI Intelligence Workspace

@@ -1,0 +1,178 @@
+- generic [ref=e1]:
+  - navigation "Main navigation" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]: X
+        - generic [ref=e7]: Xai
+        - generic [ref=e8]: Intelligence Workspace
+      - generic [ref=e9]:
+        - link "Overview" [ref=e10] [cursor=pointer]:
+          - /url: "#hero"
+        - link "How It Works" [ref=e11] [cursor=pointer]:
+          - /url: "#flow"
+        - link "Dashboard" [ref=e12] [cursor=pointer]:
+          - /url: "#dashboard"
+        - link "Experience" [ref=e13] [cursor=pointer]:
+          - /url: "#wow"
+      - button "Get started with Xai" [ref=e14]: Get Started
+  - generic [ref=e15]:
+    - generic [ref=e17]:
+      - generic [ref=e20]: Now processing 2.4M data points per second
+      - heading "From Raw Data to Intelligence" [level=1] [ref=e21]:
+        - text: From Raw Data
+        - text: to Intelligence
+      - paragraph [ref=e22]: Xai transforms unstructured data streams into structured intelligence, actionable insights, and autonomous AI workflows — in real time.
+      - generic [ref=e23]:
+        - button "Start Building" [ref=e24]
+        - button "Watch Demo" [ref=e25]
+    - generic [ref=e27]: Scroll
+  - generic [ref=e31]:
+    - generic [ref=e33]:
+      - paragraph [ref=e34]: How It Works
+      - heading "Three stages of intelligent transformation" [level=2] [ref=e35]:
+        - text: Three stages of
+        - text: intelligent transformation
+    - generic [ref=e36]:
+      - generic [ref=e40]:
+        - text: "01"
+        - heading "Ingest Data" [level=3] [ref=e41]
+        - paragraph [ref=e42]: Connect any data source — APIs, databases, file uploads, streaming events. Xai normalizes and structures incoming data in real time, regardless of format or volume.
+        - generic [ref=e43]:
+          - generic [ref=e44]: REST APIs
+          - generic [ref=e45]: SQL / NoSQL
+          - generic [ref=e46]: File Uploads
+          - generic [ref=e47]: Webhooks
+      - generic [ref=e53]:
+        - text: "02"
+        - heading "Analyze with AI" [level=3] [ref=e54]
+        - paragraph [ref=e55]: Multi-model AI pipelines process your data — detecting patterns, anomalies, and correlations that traditional analytics would miss. Every analysis is explainable and auditable.
+        - generic [ref=e56]:
+          - generic [ref=e57]: Pattern Detection
+          - generic [ref=e58]: Anomaly Scoring
+          - generic [ref=e59]: Correlation Maps
+      - generic [ref=e65]:
+        - text: "03"
+        - heading "Generate Insight" [level=3] [ref=e66]
+        - paragraph [ref=e67]: Automated insight generation delivers actionable recommendations, natural language summaries, and trigger-based automations that turn analysis into action.
+        - generic [ref=e68]:
+          - generic [ref=e69]: NL Summaries
+          - generic [ref=e70]: Auto Actions
+          - generic [ref=e71]: Alert Triggers
+  - generic [ref=e76]:
+    - generic [ref=e78]:
+      - paragraph [ref=e79]: Product Preview
+      - heading "Intelligence at your fingertips" [level=2] [ref=e80]
+      - paragraph [ref=e81]: A workspace designed for clarity. Every metric, every insight, one unified view.
+    - generic [ref=e83]:
+      - generic [ref=e89]: app.xai.ai/workspace
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e93]:
+            - generic [ref=e95]: X
+            - generic [ref=e96]: Workspace
+          - generic [ref=e97]:
+            - button "Overview" [ref=e98]:
+              - img [ref=e99]
+              - text: Overview
+            - button "Data Sources" [active] [ref=e104]:
+              - img [ref=e105]
+              - text: Data Sources
+            - button "Analysis" [ref=e108]:
+              - img [ref=e109]
+              - text: Analysis
+            - button "Insights" [ref=e112]:
+              - img [ref=e113]
+              - text: Insights
+            - button "Automations" [ref=e116]:
+              - img [ref=e117]
+              - text: Automations
+            - button "Security" [ref=e119]:
+              - img [ref=e120]
+              - text: Security
+          - generic [ref=e123]:
+            - generic [ref=e125]: JD
+            - generic [ref=e126]:
+              - generic [ref=e127]: Jane Doe
+              - generic [ref=e128]: Admin
+        - table [ref=e245]:
+          - rowgroup [ref=e246]:
+            - row "Source Type Status Records Last Sync Uptime" [ref=e247]:
+              - columnheader "Source" [ref=e248]
+              - columnheader "Type" [ref=e249]
+              - columnheader "Status" [ref=e250]
+              - columnheader "Records" [ref=e251]
+              - columnheader "Last Sync" [ref=e252]
+              - columnheader "Uptime" [ref=e253]
+          - rowgroup [ref=e254]:
+            - row "PostgreSQL Database connected 2.4M 2 min ago 99.9%" [ref=e255]:
+              - cell "PostgreSQL" [ref=e256]
+              - cell "Database" [ref=e257]
+              - cell "connected" [ref=e258]:
+                - generic [ref=e261]: connected
+              - cell "2.4M" [ref=e262]
+              - cell "2 min ago" [ref=e263]
+              - cell "99.9%" [ref=e264]
+            - row "REST API API connected 847K 5 min ago 99.7%" [ref=e265]:
+              - cell "REST API" [ref=e266]
+              - cell "API" [ref=e267]
+              - cell "connected" [ref=e268]:
+                - generic [ref=e271]: connected
+              - cell "847K" [ref=e272]
+              - cell "5 min ago" [ref=e273]
+              - cell "99.7%" [ref=e274]
+            - row "S3 Files Storage connected 1.2M 15 min ago 100%" [ref=e275]:
+              - cell "S3 Files" [ref=e276]
+              - cell "Storage" [ref=e277]
+              - cell "connected" [ref=e278]:
+                - generic [ref=e281]: connected
+              - cell "1.2M" [ref=e282]
+              - cell "15 min ago" [ref=e283]
+              - cell "100%" [ref=e284]
+            - row "Webhooks Integration warning 312K 1h ago 98.5%" [ref=e285]:
+              - cell "Webhooks" [ref=e286]
+              - cell "Integration" [ref=e287]
+              - cell "warning" [ref=e288]:
+                - generic [ref=e291]: warning
+              - cell "312K" [ref=e292]
+              - cell "1h ago" [ref=e293]
+              - cell "98.5%" [ref=e294]
+            - row "Kafka Stream Streaming connected 5.8M Live 99.8%" [ref=e295]:
+              - cell "Kafka Stream" [ref=e296]
+              - cell "Streaming" [ref=e297]
+              - cell "connected" [ref=e298]:
+                - generic [ref=e301]: connected
+              - cell "5.8M" [ref=e302]
+              - cell "Live" [ref=e303]
+              - cell "99.8%" [ref=e304]
+  - generic [ref=e202]:
+    - generic [ref=e204]:
+      - paragraph [ref=e205]: Interactive Experience
+      - heading "Watch intelligence emerge" [level=2] [ref=e206]
+      - paragraph [ref=e207]: Move your cursor to shape the data. Scroll to transform chaos into structure.
+    - generic "Interactive 3D data visualization" [ref=e208]:
+      - generic:
+        - generic:
+          - generic: Current State
+          - generic: Raw Data
+        - generic:
+          - generic: Scroll to transform
+          - generic:
+            - generic: 0%
+  - contentinfo [ref=e210]:
+    - generic [ref=e211]:
+      - generic [ref=e212]:
+        - generic [ref=e214]: X
+        - generic [ref=e215]: Xai Intelligence Workspace
+      - generic [ref=e216]:
+        - link "Documentation" [ref=e217] [cursor=pointer]:
+          - /url: "#"
+        - link "API Reference" [ref=e218] [cursor=pointer]:
+          - /url: "#"
+        - link "Status" [ref=e219] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacy" [ref=e220] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e221]: Built with intention. Delivered with craft.
+  - button "Open Next.js Dev Tools" [ref=e227] [cursor=pointer]:
+    - img [ref=e228]
+  - alert [ref=e241]
