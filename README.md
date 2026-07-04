@@ -4,6 +4,13 @@
 
 A modern landing page for an AI-powered intelligence platform, demonstrating the journey from raw data through structured analysis to actionable insights and autonomous automation. Built as a component-based Next.js 16 application.
 
+### Important Links
+
+- **Live Demo**: [https://xai-intelligence-workspacex.netlify.app](https://xai-intelligence-workspacex.netlify.app)
+- **Figma Design**: [Xai - Intelligence Workspace](https://www.figma.com/design/bLTwm0xeTOSuBTAfJjZVPz/Xai---Intelligence-Workspace?node-id=0-1&t=NJEitJ1Qr2h1k2tX-1)
+- **Demo Video**: [https://drive.google.com/file/d/10BfHu0CqaF1Wpj11hjjKTSoyq7PMnq4f/view?usp=sharing](https://drive.google.com/file/d/10BfHu0CqaF1Wpj11hjjKTSoyq7PMnq4f/view?usp=sharing)
+- **Product Documentation**: See [`Product_Documentation.pdf`](./Product_Documentation.pdf) for the full product breakdown and UI structure.
+
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router, `src/` directory)
