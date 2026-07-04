@@ -13,17 +13,20 @@ const linePositions = new Float32Array(LN * 6);
 interface ConnectionLinesProps {
   sourcePositions: RefObject<Float32Array>;
   heroProgress: RefObject<number>;
+  visible: React.MutableRefObject<boolean>;
 }
 
 export default function ConnectionLines({
   sourcePositions,
   heroProgress,
+  visible,
 }: ConnectionLinesProps) {
   const lineGeo = useRef<THREE.BufferGeometry>(null);
   const lineMat = useRef<THREE.LineBasicMaterial>(null);
   const frameCount = useRef(0);
 
   useFrame(() => {
+    if (!visible.current) return;
     frameCount.current++;
     if (frameCount.current % 12 !== 0) return;
 
@@ -64,6 +67,7 @@ export default function ConnectionLines({
   });
 
   useFrame(() => {
+    if (!visible.current) return;
     if (lineMat.current) {
       lineMat.current.opacity = 0.01 + heroProgress.current * 0.03;
     }

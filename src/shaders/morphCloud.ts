@@ -22,8 +22,9 @@ export const MorphCloudMaterial = shaderMaterial(
       p += normalize(p + .001) * sin(uTime * .7 + length(p) * 2.) * .03;
       vec4 mv = modelViewMatrix * vec4(p, 1.);
       gl_Position = projectionMatrix * mv;
-      gl_PointSize = clamp(size * uDpr * (24. / -mv.z), 1., 14.);
-      vA = .65 + push * .35;
+      gl_PointSize = clamp(size * uDpr * (24. / -mv.z), 1., 18.);
+      float brightness = smoothstep(0.5, 4.1, size);
+      vA = (0.28 + brightness * 0.62) + push * .3;
     }
   `,
   /* fragment */
@@ -52,7 +53,6 @@ export const MorphCloudMaterial = shaderMaterial(
 extend({ MorphCloudMaterial });
 
 declare module "@react-three/fiber" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface ThreeElements {
     morphCloudMaterial: Record<string, unknown>;
   }

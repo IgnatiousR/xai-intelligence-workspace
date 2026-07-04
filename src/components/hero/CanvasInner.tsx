@@ -9,9 +9,11 @@ import ConnectionLines from "./ConnectionLines";
 function SceneContent({
   sectionRef,
   heroProgress,
+  visible,
 }: {
   sectionRef: RefObject<HTMLElement | null>;
   heroProgress: React.MutableRefObject<number>;
+  visible: React.MutableRefObject<boolean>;
 }) {
   const sharedPositions = useRef<Float32Array>(new Float32Array(1600 * 3));
 
@@ -29,29 +31,39 @@ function SceneContent({
 
   return (
     <>
-      <ParticleField heroProgress={heroProgress} sharedPositions={sharedPositions} />
-      <ConnectionLines
-        sourcePositions={sharedPositions}
+      <ParticleField
         heroProgress={heroProgress}
+        sharedPositionsRef={sharedPositions}
+        containerRef={sectionRef}
+        visible={visible}
       />
+      <ConnectionLines sourcePositions={sharedPositions} heroProgress={heroProgress} visible={visible} />
     </>
   );
 }
 
-export default function CanvasInner({
-  sectionRef,
-}: {
-  sectionRef: RefObject<HTMLElement | null>;
-}) {
+export default function CanvasInner({ sectionRef }: { sectionRef: RefObject<HTMLElement | null> }) {
   const heroProgress = useRef(0);
+  const visible = useRef(true);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { visible.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sectionRef]);
 
   return (
     <Canvas
       camera={{ fov: 55, position: [0, 0, 6], near: 0.1, far: 500 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true }}
+      dpr={[1, 1.5]}
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
-      <SceneContent sectionRef={sectionRef} heroProgress={heroProgress} />
+      <SceneContent sectionRef={sectionRef} heroProgress={heroProgress} visible={visible} />
     </Canvas>
   );
 }

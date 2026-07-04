@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, type RefObject } from "react";
+import { useRef, useMemo, useEffect, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointer } from "@/hooks/usePointer";
@@ -17,16 +17,20 @@ const rndColor = Float32Array.from({ length: N }, () => Math.random());
 
 interface ParticleFieldProps {
   heroProgress: RefObject<number>;
-  sharedPositions: RefObject<Float32Array>;
+  sharedPositionsRef: RefObject<Float32Array>; // renamed
+  containerRef: RefObject<HTMLElement | null>;
+  visible: React.MutableRefObject<boolean>;
 }
 
 export default function ParticleField({
   heroProgress,
-  sharedPositions,
+  sharedPositionsRef, // renamed
+  containerRef,
+  visible,
 }: ParticleFieldProps) {
   const pointsRef = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
-  const pointer = usePointer();
+  const pointer = usePointer(containerRef);
 
   const { randPositions, gridPositions, sizes, colors } = useMemo(() => {
     const rand = new Float32Array(N * 3);
@@ -58,15 +62,15 @@ export default function ParticleField({
     return { randPositions: rand, gridPositions: grid, sizes: sz, colors: col };
   }, []);
 
-  const positions = useMemo(
-    () => Float32Array.from(randPositions),
-    [randPositions]
-  );
+  const positions = useMemo(() => Float32Array.from(randPositions), [randPositions]);
 
-  // Sync shared positions ref so ConnectionLines can read them
-  sharedPositions.current = positions;
+  // Sync shared positions after render, not during it
+  useEffect(() => {
+    sharedPositionsRef.current = positions;
+  }, [positions, sharedPositionsRef]);
 
   useFrame((state) => {
+    if (!visible.current) return;
     const t = state.clock.elapsedTime;
     const geo = pointsRef.current?.geometry;
     if (!geo) return;
@@ -76,10 +80,9 @@ export default function ParticleField({
 
     for (let i = 0; i < N; i++) {
       const i3 = i * 3;
-      for (const axis of [0, 1, 2]) {
+      for (let axis = 0; axis < 3; axis++) {
         const target =
-          randPositions[i3 + axis] +
-          (gridPositions[i3 + axis] - randPositions[i3 + axis]) * p;
+          randPositions[i3 + axis] + (gridPositions[i3 + axis] - randPositions[i3 + axis]) * p;
         pos[i3 + axis] += (target - pos[i3 + axis]) * sp;
       }
     }
@@ -98,10 +101,7 @@ export default function ParticleField({
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
         <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
       </bufferGeometry>

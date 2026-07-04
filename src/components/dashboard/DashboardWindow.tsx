@@ -25,6 +25,7 @@ const fade = {
 export default function DashboardWindow() {
   const [sidebar, setSidebar] = useState("overview");
   const [tab, setTab] = useState("overview");
+  const [collapsed, setCollapsed] = useState(false);
 
   const showTabs = sidebar === "overview";
 
@@ -45,7 +46,7 @@ export default function DashboardWindow() {
       </div>
 
       <div className="flex h-150">
-        <Sidebar active={sidebar} onActiveChange={setSidebar} />
+        <Sidebar active={sidebar} onActiveChange={setSidebar} collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} />
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Metric cards - only on overview */}
           {sidebar === "overview" && (

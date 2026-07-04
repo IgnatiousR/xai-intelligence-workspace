@@ -46,17 +46,40 @@ const icons: Record<string, ReactNode> = {
 interface SidebarProps {
   active: string;
   onActiveChange: (id: string) => void;
+  collapsed: boolean;
+  onCollapse: () => void;
 }
 
-export default function Sidebar({ active, onActiveChange }: SidebarProps) {
+export default function Sidebar({ active, onActiveChange, collapsed, onCollapse }: SidebarProps) {
   return (
-    <div className="w-52 border-r border-bdr bg-bg-el/20 flex-shrink-0 hidden md:flex flex-col">
+    <div className={cn(
+      "border-r border-bdr bg-bg-el/20 flex-shrink-0 hidden md:flex flex-col transition-all duration-200",
+      collapsed ? "w-14" : "w-52"
+    )}>
       <div className="p-3.5 border-b border-bdr">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-accent/15 flex items-center justify-center">
+          <div className="w-5 h-5 rounded bg-accent/15 flex items-center justify-center flex-shrink-0">
             <span className="text-accent text-[10px] font-bold">X</span>
           </div>
-          <span className="font-display font-semibold text-xs">Workspace</span>
+          {!collapsed && <span className="font-display font-semibold text-xs">Workspace</span>}
+          <button
+            onClick={onCollapse}
+            className={cn(
+              "p-1 rounded hover:bg-accent/[.07] text-fg-m hover:text-accent transition-colors flex-shrink-0",
+              collapsed ? "mx-auto" : "ml-auto"
+            )}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
       <div className="flex-1 py-2.5 px-2 space-y-0.5 text-[13px] font-body">
@@ -65,28 +88,30 @@ export default function Sidebar({ active, onActiveChange }: SidebarProps) {
             key={item.id}
             onClick={() => onActiveChange(item.id)}
             className={cn(
-              "flex items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
+              "flex items-center gap-2.5 rounded-lg text-left transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
+              collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2",
               active === item.id
                 ? "bg-accent/[.07] text-accent"
                 : "text-fg-m hover:bg-accent/[.07] hover:text-accent"
             )}
+            title={collapsed ? item.label : undefined}
           >
             {icons[item.id]}
-            {item.label}
+            {!collapsed && item.label}
           </button>
         ))}
       </div>
       <div className="p-2.5 border-t border-bdr">
-        <div className="flex items-center gap-2 px-1.5 py-1">
-          <div className="w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center">
+        <div className={cn("flex items-center gap-2 py-1", collapsed ? "justify-center" : "px-1.5")}>
+          <div className="w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
             <span className="text-accent text-[9px] font-bold">JD</span>
           </div>
-          <div>
-            <div className="text-[11px] font-medium leading-tight">
-              Jane Doe
+          {!collapsed && (
+            <div>
+              <div className="text-[11px] font-medium leading-tight">Jane Doe</div>
+              <div className="text-[9px] text-fg-m">Admin</div>
             </div>
-            <div className="text-[9px] text-fg-m">Admin</div>
-          </div>
+          )}
         </div>
       </div>
     </div>

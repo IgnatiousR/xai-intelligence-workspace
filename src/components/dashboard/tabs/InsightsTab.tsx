@@ -23,11 +23,15 @@ export default function InsightsTab() {
           className="rounded-xl bg-bg-el p-4 hover:bg-bg-el/80 transition-colors cursor-pointer"
         >
           <div className="flex items-start gap-3">
-            <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${severityColors[insight.severity]}`} />
+            <div
+              className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${severityColors[insight.severity]}`}
+            />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-medium text-[13px]">{insight.title}</span>
-                <span className={`px-1.5 py-0.5 rounded text-[10px] ${severityBg[insight.severity]}`}>
+                <span
+                  className={`px-1.5 py-0.5 rounded text-[10px] ${severityBg[insight.severity]}`}
+                >
                   {insight.severity}
                 </span>
               </div>

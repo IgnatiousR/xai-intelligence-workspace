@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -14,7 +14,19 @@ export default function WowSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLDivElement>(null);
+  const visible = useRef(true);
   const progress = useWheelProgress(containerRef, { speed: 0.001 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { visible.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useGSAP(
     () => {
@@ -64,7 +76,7 @@ export default function WowSection() {
           aria-label="Interactive 3D data visualization"
         >
           <div ref={windowRef} className="h-full">
-            <WowCanvas wowProgress={progress} containerRef={containerRef} />
+            <WowCanvas wowProgress={progress} containerRef={containerRef} visible={visible} />
           </div>
           <WowOverlay progress={progress} />
         </div>

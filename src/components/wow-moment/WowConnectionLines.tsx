@@ -10,15 +10,18 @@ const linePositions = new Float32Array(WLN * 6);
 
 interface WowConnectionLinesProps {
   sourcePositions: RefObject<Float32Array>;
+  visible: React.MutableRefObject<boolean>;
 }
 
 export default function WowConnectionLines({
   sourcePositions,
+  visible,
 }: WowConnectionLinesProps) {
   const lineGeo = useRef<THREE.BufferGeometry>(null);
   const frameCount = useRef(0);
 
   useFrame(() => {
+    if (!visible.current) return;
     frameCount.current++;
     if (frameCount.current % 10 !== 0) return;
 

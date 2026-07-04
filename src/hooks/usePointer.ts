@@ -13,12 +13,13 @@ export function usePointer(containerRef?: RefObject<HTMLElement | null>) {
       const h = rect?.height ?? window.innerHeight;
       const x = rect ? e.clientX - rect.left : e.clientX;
       const y = rect ? e.clientY - rect.top : e.clientY;
-      pointer.current.x = (x / w) * 2 - 1;
+      const aspect = h > 0 ? w / h : 1;
+
+      pointer.current.x = ((x / w) * 2 - 1) * aspect; // aspect-corrected
       pointer.current.y = -(y / h) * 2 + 1;
     };
     target.addEventListener("mousemove", onMove as EventListener);
-    return () =>
-      target.removeEventListener("mousemove", onMove as EventListener);
+    return () => target.removeEventListener("mousemove", onMove as EventListener);
   }, [containerRef]);
 
   return pointer;
