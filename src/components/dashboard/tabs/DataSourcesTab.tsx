@@ -1,4 +1,5 @@
 import { dataSourceDetails } from "@/data/dashboard";
+import { TabWrapper } from "./TabWrapper";
 
 const statusColors = {
   connected: "bg-green-400",
@@ -7,20 +8,17 @@ const statusColors = {
 };
 
 export default function DataSourcesTab() {
+  const columns = [
+    { label: "Source" },
+    { label: "Type" },
+    { label: "Status", className: "hidden sm:table-cell" },
+    { label: "Records", className: "hidden md:table-cell" },
+    { label: "Last Sync", className: "hidden lg:table-cell" },
+    { label: "Uptime", className: "text-right" },
+  ];
+
   return (
-    <div className="space-y-3">
-      <div className="rounded-xl bg-bg-el overflow-hidden">
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr className="border-b border-bdr text-fg-m text-[11px] font-body">
-              <th scope="col" className="text-left p-3 font-medium">Source</th>
-              <th scope="col" className="text-left p-3 font-medium">Type</th>
-              <th scope="col" className="text-left p-3 font-medium hidden sm:table-cell">Status</th>
-              <th scope="col" className="text-left p-3 font-medium hidden md:table-cell">Records</th>
-              <th scope="col" className="text-left p-3 font-medium hidden lg:table-cell">Last Sync</th>
-              <th scope="col" className="text-right p-3 font-medium">Uptime</th>
-            </tr>
-          </thead>
+    <TabWrapper columns={columns}>
           <tbody className="font-body">
             {dataSourceDetails.map((source, i) => (
               <tr
@@ -40,9 +38,7 @@ export default function DataSourcesTab() {
                 <td className="p-3 text-right font-medium">{source.uptime}</td>
               </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      </tbody>
+    </TabWrapper>
   );
 }

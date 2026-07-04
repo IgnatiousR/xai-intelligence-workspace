@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { useGSAP } from "@gsap/react";
-import { gsap } from "@/lib/gsap";
+import { useRef } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useWheelProgress } from "@/hooks/useWheelProgress";
+import { useVisibilityObserver } from "@/hooks/useVisibilityObserver";
+import { useRevealAnimation } from "@/hooks/useRevealAnimation";
 import dynamic from "next/dynamic";
 import WowOverlay from "./WowOverlay";
 
@@ -14,45 +14,10 @@ export default function WowSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLDivElement>(null);
-  const visible = useRef(true);
+  const visible = useVisibilityObserver(containerRef);
   const progress = useWheelProgress(containerRef, { speed: 0.001 });
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { visible.current = entry.isIntersecting; },
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useGSAP(
-    () => {
-      if (headerRef.current) {
-        gsap.set(headerRef.current, { y: 25, opacity: 0 });
-        gsap.to(headerRef.current, {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: { trigger: headerRef.current, start: "top 82%" },
-        });
-      }
-      if (windowRef.current) {
-        gsap.set(windowRef.current, { y: 35, opacity: 0 });
-        gsap.to(windowRef.current, {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: { trigger: windowRef.current, start: "top 82%" },
-        });
-      }
-    },
-    { scope: headerRef }
-  );
+  useRevealAnimation(headerRef, windowRef);
 
   return (
     <section

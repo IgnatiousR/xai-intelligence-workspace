@@ -1,40 +1,16 @@
 "use client";
 
 import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+// import { gsap } from "@/lib/gsap";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { useRevealAnimation } from "@/hooks/useRevealAnimation";
 import DashboardWindow from "./DashboardWindow";
 
 export default function DashboardSection() {
   const headerRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      if (headerRef.current) {
-        gsap.set(headerRef.current, { y: 25, opacity: 0 });
-        gsap.to(headerRef.current, {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: { trigger: headerRef.current, start: "top 82%" },
-        });
-      }
-      if (windowRef.current) {
-        gsap.set(windowRef.current, { y: 35, opacity: 0 });
-        gsap.to(windowRef.current, {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: { trigger: windowRef.current, start: "top 82%" },
-        });
-      }
-    },
-    { scope: headerRef }
-  );
+  useRevealAnimation(headerRef, windowRef);
 
   return (
     <section

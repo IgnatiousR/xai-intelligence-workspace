@@ -8,4 +8,4 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
-export { gsap, ScrollTrigger };
+export { gsap };

@@ -15,7 +15,7 @@ export default function WowCanvas({
 }: {
   wowProgress: RefObject<number>;
   containerRef: RefObject<HTMLElement | null>;
-  visible: React.MutableRefObject<boolean>;
+  visible: RefObject<boolean>;
 }) {
   const isMobile = useIsMobile();
   const particleCount = isMobile ? MOBILE.wowParticles : DESKTOP.wowParticles;

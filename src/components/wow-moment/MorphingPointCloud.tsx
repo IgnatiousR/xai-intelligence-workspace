@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useMemo, type RefObject, useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, useMemo, type RefObject } from "react";
+// import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointer } from "@/hooks/usePointer";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { updateParticleMaterial } from "@/lib/updateParticleMaterial";
 import { DESKTOP, MOBILE } from "@/lib/particleConfig";
+import { useParticleSetup, useParticleFrame } from "@/hooks/useParticleSetup";
+import { ParticlePoints } from "@/components/shared/ParticlePoints";
 
 const MAX_WN = 700;
 const eps = 0.0001;
@@ -27,7 +29,7 @@ interface MorphingPointCloudProps {
   wowProgress: RefObject<number>;
   containerRef: RefObject<HTMLElement | null>;
   sharedPositionsRef: RefObject<Float32Array>;
-  visible: React.MutableRefObject<boolean>;
+  visible: RefObject<boolean>;
 }
 
 export default function MorphingPointCloud({
@@ -104,23 +106,10 @@ export default function MorphingPointCloud({
     };
   }, []);
 
-  const positions = useMemo(
-    () => Float32Array.from(chaosTargets), // was sphereTargets
-    [chaosTargets],
-  );
+  const positions = useParticleSetup(sharedPositionsRef, chaosTargets);
 
-  // Sync shared positions after render, not during it
-  useEffect(() => {
-    sharedPositionsRef.current = positions;
-  }, [positions, sharedPositionsRef]);
-
-  useFrame((state) => {
-    if (!visible.current) return;
-    const t = state.clock.elapsedTime;
-    const geo = pointsRef.current?.geometry;
-    if (!geo) return;
-    const pos = geo.attributes.position.array as Float32Array;
-    const sp = 0.035;
+  useParticleFrame(visible, pointsRef, (state, delta, pos, t, geo) => {
+    const sp = Math.min(delta * 2.1, 1);
     const wowP = wowProgress.current;
 
     for (let i = 0; i < WN; i++) {
@@ -164,18 +153,13 @@ export default function MorphingPointCloud({
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
-        <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
-      </bufferGeometry>
+    <ParticlePoints ref={pointsRef} positions={positions} sizes={sizes} colors={colors}>
       <morphCloudMaterial
         ref={materialRef}
         transparent
         depthWrite={false}
         blending={THREE.AdditiveBlending}
       />
-    </points>
+    </ParticlePoints>
   );
 }

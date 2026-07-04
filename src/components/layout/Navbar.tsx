@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { navLinks } from "@/data/nav";
+import MobileNav from "./MobileNav";
 
 export default function Navbar() {
   return (
@@ -31,13 +32,16 @@ export default function Navbar() {
             </a>
           ))}
         </div>
-        <Button
-          variant="primary"
-          className="px-4 py-1.5 text-[13px] rounded-lg"
-          aria-label="Get started with Xai"
-        >
-          Get Started
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="primary"
+            className="px-4 py-1.5 text-[13px] rounded-lg"
+            aria-label="Get started with Xai"
+          >
+            Get Started
+          </Button>
+          <MobileNav />
+        </div>
       </div>
     </nav>
   );

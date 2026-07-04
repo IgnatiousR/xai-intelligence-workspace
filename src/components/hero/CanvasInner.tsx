@@ -6,6 +6,7 @@ import "@/shaders/particleField"; // ensure extend() runs before Canvas mounts
 import ParticleField from "./ParticleField";
 import ConnectionLines from "./ConnectionLines";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useVisibilityObserver } from "@/hooks/useVisibilityObserver";
 import { DESKTOP, MOBILE } from "@/lib/particleConfig";
 
 function SceneContent({
@@ -15,8 +16,8 @@ function SceneContent({
   particleCount,
 }: {
   sectionRef: RefObject<HTMLElement | null>;
-  heroProgress: React.MutableRefObject<number>;
-  visible: React.MutableRefObject<boolean>;
+  heroProgress: RefObject<number>;
+  visible: RefObject<boolean>;
   particleCount: number;
 }) {
   const sharedPositions = useRef<Float32Array>(new Float32Array(particleCount * 3));
@@ -48,21 +49,10 @@ function SceneContent({
 
 export default function CanvasInner({ sectionRef }: { sectionRef: RefObject<HTMLElement | null> }) {
   const heroProgress = useRef(0);
-  const visible = useRef(true);
+  const visible = useVisibilityObserver(sectionRef);
   const isMobile = useIsMobile();
   const particleCount = isMobile ? MOBILE.heroParticles : DESKTOP.heroParticles;
   const dprMax = isMobile ? MOBILE.dprMax : DESKTOP.dprMax;
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { visible.current = entry.isIntersecting; },
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [sectionRef]);
 
   return (
     <Canvas

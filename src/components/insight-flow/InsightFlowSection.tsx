@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { stages } from "@/data/stages";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import StageBlock from "./StageBlock";

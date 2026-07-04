@@ -1,4 +1,5 @@
 import { analysisModels } from "@/data/dashboard";
+import { TabWrapper } from "./TabWrapper";
 
 const statusColors = {
   active: "text-green-400",
@@ -6,19 +7,16 @@ const statusColors = {
 };
 
 export default function AnalysisTab() {
+  const columns = [
+    { label: "Model" },
+    { label: "Accuracy" },
+    { label: "Latency", className: "hidden sm:table-cell" },
+    { label: "Queries", className: "hidden md:table-cell" },
+    { label: "Status", className: "text-right" },
+  ];
+
   return (
-    <div className="space-y-3">
-      <div className="rounded-xl bg-bg-el overflow-hidden">
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr className="border-b border-bdr text-fg-m text-[11px] font-body">
-              <th scope="col" className="text-left p-3 font-medium">Model</th>
-              <th scope="col" className="text-left p-3 font-medium">Accuracy</th>
-              <th scope="col" className="text-left p-3 font-medium hidden sm:table-cell">Latency</th>
-              <th scope="col" className="text-left p-3 font-medium hidden md:table-cell">Queries</th>
-              <th scope="col" className="text-right p-3 font-medium">Status</th>
-            </tr>
-          </thead>
+    <TabWrapper columns={columns}>
           <tbody className="font-body">
             {analysisModels.map((model, i) => (
               <tr
@@ -44,9 +42,7 @@ export default function AnalysisTab() {
                 </td>
               </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      </tbody>
+    </TabWrapper>
   );
 }

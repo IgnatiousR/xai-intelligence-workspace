@@ -5,13 +5,15 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { DESKTOP, MOBILE } from "@/lib/particleConfig";
+import { updateConnections } from "@/lib/webgl-utils";
 
 const MAX_WLN = 250;
+const MAX_DIST = 1.1;
 const linePositions = new Float32Array(MAX_WLN * 6);
 
 interface WowConnectionLinesProps {
   sourcePositions: RefObject<Float32Array>;
-  visible: React.MutableRefObject<boolean>;
+  visible: RefObject<boolean>;
 }
 
 export default function WowConnectionLines({
@@ -19,48 +21,22 @@ export default function WowConnectionLines({
   visible,
 }: WowConnectionLinesProps) {
   const lineGeo = useRef<THREE.BufferGeometry>(null);
-  const frameCount = useRef(0);
+  const timer = useRef(0);
   const isMobile = useIsMobile();
   const WLN = isMobile ? MOBILE.wowLines : DESKTOP.wowLines;
   const WN = isMobile ? MOBILE.wowParticles : DESKTOP.wowParticles;
   const SAMPLES = isMobile ? MOBILE.wowSamples : DESKTOP.wowSamples;
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (!visible.current) return;
-    frameCount.current++;
-    if (frameCount.current % 10 !== 0) return;
+    timer.current += delta;
+    if (timer.current < 0.166) return;
+    timer.current = 0;
 
     const p = sourcePositions.current;
     if (!p) return;
 
-    for (let i = 0; i < WLN; i++) {
-      let bA = -1,
-        bB = -1,
-        bD = 1.1; // MAX_DIST inlined as before
-      for (let t = 0; t < SAMPLES; t++) {
-        const a = (Math.random() * WN) | 0;
-        const b = (Math.random() * WN) | 0;
-        if (a === b) continue;
-        const dx = p[a * 3] - p[b * 3];
-        const dy = p[a * 3 + 1] - p[b * 3 + 1];
-        const dz = p[a * 3 + 2] - p[b * 3 + 2];
-        const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (d < bD) {
-          bD = d;
-          bA = a;
-          bB = b;
-        }
-      }
-
-      if (bA === -1) continue;
-
-      linePositions[i * 6] = p[bA * 3];
-      linePositions[i * 6 + 1] = p[bA * 3 + 1];
-      linePositions[i * 6 + 2] = p[bA * 3 + 2];
-      linePositions[i * 6 + 3] = p[bB * 3];
-      linePositions[i * 6 + 4] = p[bB * 3 + 1];
-      linePositions[i * 6 + 5] = p[bB * 3 + 2];
-    }
+    updateConnections(linePositions, p, WLN, WN, SAMPLES, MAX_DIST);
     if (lineGeo.current) {
       lineGeo.current.attributes.position.needsUpdate = true;
     }

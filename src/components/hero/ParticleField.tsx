@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useMemo, useEffect, type RefObject } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, useMemo, type RefObject } from "react";
+// import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointer } from "@/hooks/usePointer";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { updateParticleMaterial } from "@/lib/updateParticleMaterial";
 import { DESKTOP, MOBILE } from "@/lib/particleConfig";
+import { useParticleSetup, useParticleFrame } from "@/hooks/useParticleSetup";
+import { ParticlePoints } from "@/components/shared/ParticlePoints";
 
 const MAX_N = 1600;
 
@@ -21,7 +23,7 @@ interface ParticleFieldProps {
   heroProgress: RefObject<number>;
   sharedPositionsRef: RefObject<Float32Array>; // renamed
   containerRef: RefObject<HTMLElement | null>;
-  visible: React.MutableRefObject<boolean>;
+  visible: RefObject<boolean>;
 }
 
 export default function ParticleField({
@@ -66,20 +68,10 @@ export default function ParticleField({
     return { randPositions: rand, gridPositions: grid, sizes: sz, colors: col };
   }, []);
 
-  const positions = useMemo(() => Float32Array.from(randPositions), [randPositions]);
+  const positions = useParticleSetup(sharedPositionsRef, randPositions);
 
-  // Sync shared positions after render, not during it
-  useEffect(() => {
-    sharedPositionsRef.current = positions;
-  }, [positions, sharedPositionsRef]);
-
-  useFrame((state) => {
-    if (!visible.current) return;
-    const t = state.clock.elapsedTime;
-    const geo = pointsRef.current?.geometry;
-    if (!geo) return;
-    const pos = geo.attributes.position.array as Float32Array;
-    const sp = 0.022;
+  useParticleFrame(visible, pointsRef, (state, delta, pos, t, geo) => {
+    const sp = Math.min(delta * 1.32, 1);
     const p = heroProgress.current;
 
     for (let i = 0; i < N; i++) {
@@ -103,18 +95,13 @@ export default function ParticleField({
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
-        <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
-      </bufferGeometry>
+    <ParticlePoints ref={pointsRef} positions={positions} sizes={sizes} colors={colors}>
       <particleFieldMaterial
         ref={materialRef}
         transparent
         depthWrite={false}
         blending={THREE.AdditiveBlending}
       />
-    </points>
+    </ParticlePoints>
   );
 }
