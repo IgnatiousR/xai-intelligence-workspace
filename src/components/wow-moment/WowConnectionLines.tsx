@@ -3,10 +3,11 @@
 import { useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { DESKTOP, MOBILE } from "@/lib/particleConfig";
 
-const WLN = 250;
-const WN = 700;
-const linePositions = new Float32Array(WLN * 6);
+const MAX_WLN = 250;
+const linePositions = new Float32Array(MAX_WLN * 6);
 
 interface WowConnectionLinesProps {
   sourcePositions: RefObject<Float32Array>;
@@ -19,6 +20,10 @@ export default function WowConnectionLines({
 }: WowConnectionLinesProps) {
   const lineGeo = useRef<THREE.BufferGeometry>(null);
   const frameCount = useRef(0);
+  const isMobile = useIsMobile();
+  const WLN = isMobile ? MOBILE.wowLines : DESKTOP.wowLines;
+  const WN = isMobile ? MOBILE.wowParticles : DESKTOP.wowParticles;
+  const SAMPLES = isMobile ? MOBILE.wowSamples : DESKTOP.wowSamples;
 
   useFrame(() => {
     if (!visible.current) return;
@@ -32,7 +37,7 @@ export default function WowConnectionLines({
       let bA = -1,
         bB = -1,
         bD = 1.1; // MAX_DIST inlined as before
-      for (let t = 0; t < 12; t++) {
+      for (let t = 0; t < SAMPLES; t++) {
         const a = (Math.random() * WN) | 0;
         const b = (Math.random() * WN) | 0;
         if (a === b) continue;

@@ -4,22 +4,24 @@ import { useRef, useMemo, type RefObject, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointer } from "@/hooks/usePointer";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { updateParticleMaterial } from "@/lib/updateParticleMaterial";
+import { DESKTOP, MOBILE } from "@/lib/particleConfig";
 
-const WN = 700;
+const MAX_WN = 700;
 const eps = 0.0001;
 
 // Pre-compute random values at module scope to avoid Math.random() during render
-const rndCubeX = Float32Array.from({ length: WN }, () => Math.random());
-const rndCubeY = Float32Array.from({ length: WN }, () => Math.random());
-const rndCubeZ = Float32Array.from({ length: WN }, () => Math.random());
-const rndTorusU = Float32Array.from({ length: WN }, () => Math.random());
-const rndSize = Float32Array.from({ length: WN }, () => Math.random());
-const rndColor = Float32Array.from({ length: WN }, () => Math.random());
+const rndCubeX = Float32Array.from({ length: MAX_WN }, () => Math.random());
+const rndCubeY = Float32Array.from({ length: MAX_WN }, () => Math.random());
+const rndCubeZ = Float32Array.from({ length: MAX_WN }, () => Math.random());
+const rndTorusU = Float32Array.from({ length: MAX_WN }, () => Math.random());
+const rndSize = Float32Array.from({ length: MAX_WN }, () => Math.random());
+const rndColor = Float32Array.from({ length: MAX_WN }, () => Math.random());
 
-const rndChaosX = Float32Array.from({ length: WN }, () => Math.random());
-const rndChaosY = Float32Array.from({ length: WN }, () => Math.random());
-const rndChaosZ = Float32Array.from({ length: WN }, () => Math.random());
+const rndChaosX = Float32Array.from({ length: MAX_WN }, () => Math.random());
+const rndChaosY = Float32Array.from({ length: MAX_WN }, () => Math.random());
+const rndChaosZ = Float32Array.from({ length: MAX_WN }, () => Math.random());
 
 interface MorphingPointCloudProps {
   wowProgress: RefObject<number>;
@@ -37,6 +39,8 @@ export default function MorphingPointCloud({
   const pointsRef = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const pointer = usePointer(containerRef);
+  const isMobile = useIsMobile();
+  const WN = isMobile ? MOBILE.wowParticles : DESKTOP.wowParticles;
 
   const { sphereTargets, cubeTargets, torusTargets, chaosTargets, sizes, colors } = useMemo(() => {
     const sphere = new Float32Array(WN * 3);

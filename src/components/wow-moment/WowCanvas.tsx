@@ -5,6 +5,8 @@ import { Canvas } from "@react-three/fiber";
 import "@/shaders/morphCloud"; // ensure extend() runs before Canvas mounts
 import MorphingPointCloud from "./MorphingPointCloud";
 import WowConnectionLines from "./WowConnectionLines";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { DESKTOP, MOBILE } from "@/lib/particleConfig";
 
 export default function WowCanvas({
   wowProgress,
@@ -15,12 +17,15 @@ export default function WowCanvas({
   containerRef: RefObject<HTMLElement | null>;
   visible: React.MutableRefObject<boolean>;
 }) {
-  const sharedPositions = useRef<Float32Array>(new Float32Array(700 * 3));
+  const isMobile = useIsMobile();
+  const particleCount = isMobile ? MOBILE.wowParticles : DESKTOP.wowParticles;
+  const dprMax = isMobile ? MOBILE.dprMax : DESKTOP.dprMax;
+  const sharedPositions = useRef<Float32Array>(new Float32Array(particleCount * 3));
 
   return (
     <Canvas
       camera={{ fov: 50, position: [0, 0, 6], near: 0.1, far: 100 }}
-      dpr={[1, 1.5]}
+      dpr={[1, dprMax]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       style={{ width: "100%", height: "100%" }}
     >

@@ -3,12 +3,12 @@
 import { useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { DESKTOP, MOBILE } from "@/lib/particleConfig";
 
-const LN = 180;
-const N = 1600;
+const MAX_LN = 180;
 const MAX_DIST = 0.8; // reduced from 1.3 to avoid long visible lines
-const SAMPLES = 18;
-const linePositions = new Float32Array(LN * 6);
+const linePositions = new Float32Array(MAX_LN * 6);
 
 interface ConnectionLinesProps {
   sourcePositions: RefObject<Float32Array>;
@@ -24,6 +24,10 @@ export default function ConnectionLines({
   const lineGeo = useRef<THREE.BufferGeometry>(null);
   const lineMat = useRef<THREE.LineBasicMaterial>(null);
   const frameCount = useRef(0);
+  const isMobile = useIsMobile();
+  const LN = isMobile ? MOBILE.heroLines : DESKTOP.heroLines;
+  const N = isMobile ? MOBILE.heroParticles : DESKTOP.heroParticles;
+  const SAMPLES = isMobile ? MOBILE.heroSamples : DESKTOP.heroSamples;
 
   useFrame(() => {
     if (!visible.current) return;

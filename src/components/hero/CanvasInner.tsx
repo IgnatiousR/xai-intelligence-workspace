@@ -5,17 +5,21 @@ import { Canvas } from "@react-three/fiber";
 import "@/shaders/particleField"; // ensure extend() runs before Canvas mounts
 import ParticleField from "./ParticleField";
 import ConnectionLines from "./ConnectionLines";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { DESKTOP, MOBILE } from "@/lib/particleConfig";
 
 function SceneContent({
   sectionRef,
   heroProgress,
   visible,
+  particleCount,
 }: {
   sectionRef: RefObject<HTMLElement | null>;
   heroProgress: React.MutableRefObject<number>;
   visible: React.MutableRefObject<boolean>;
+  particleCount: number;
 }) {
-  const sharedPositions = useRef<Float32Array>(new Float32Array(1600 * 3));
+  const sharedPositions = useRef<Float32Array>(new Float32Array(particleCount * 3));
 
   useEffect(() => {
     const onScroll = () => {
@@ -45,6 +49,9 @@ function SceneContent({
 export default function CanvasInner({ sectionRef }: { sectionRef: RefObject<HTMLElement | null> }) {
   const heroProgress = useRef(0);
   const visible = useRef(true);
+  const isMobile = useIsMobile();
+  const particleCount = isMobile ? MOBILE.heroParticles : DESKTOP.heroParticles;
+  const dprMax = isMobile ? MOBILE.dprMax : DESKTOP.dprMax;
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -60,10 +67,10 @@ export default function CanvasInner({ sectionRef }: { sectionRef: RefObject<HTML
   return (
     <Canvas
       camera={{ fov: 55, position: [0, 0, 6], near: 0.1, far: 500 }}
-      dpr={[1, 1.5]}
+      dpr={[1, dprMax]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
-      <SceneContent sectionRef={sectionRef} heroProgress={heroProgress} visible={visible} />
+      <SceneContent sectionRef={sectionRef} heroProgress={heroProgress} visible={visible} particleCount={particleCount} />
     </Canvas>
   );
 }

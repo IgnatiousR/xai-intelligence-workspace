@@ -4,16 +4,18 @@ import { useRef, useMemo, useEffect, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointer } from "@/hooks/usePointer";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { updateParticleMaterial } from "@/lib/updateParticleMaterial";
+import { DESKTOP, MOBILE } from "@/lib/particleConfig";
 
-const N = 1600;
+const MAX_N = 1600;
 
 // Pre-compute random values at module scope to avoid Math.random() during render
-const rndX = Float32Array.from({ length: N }, () => Math.random());
-const rndY = Float32Array.from({ length: N }, () => Math.random());
-const rndZ = Float32Array.from({ length: N }, () => Math.random());
-const rndSize = Float32Array.from({ length: N }, () => Math.random());
-const rndColor = Float32Array.from({ length: N }, () => Math.random());
+const rndX = Float32Array.from({ length: MAX_N }, () => Math.random());
+const rndY = Float32Array.from({ length: MAX_N }, () => Math.random());
+const rndZ = Float32Array.from({ length: MAX_N }, () => Math.random());
+const rndSize = Float32Array.from({ length: MAX_N }, () => Math.random());
+const rndColor = Float32Array.from({ length: MAX_N }, () => Math.random());
 
 interface ParticleFieldProps {
   heroProgress: RefObject<number>;
@@ -31,6 +33,8 @@ export default function ParticleField({
   const pointsRef = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const pointer = usePointer(containerRef);
+  const isMobile = useIsMobile();
+  const N = isMobile ? MOBILE.heroParticles : DESKTOP.heroParticles;
 
   const { randPositions, gridPositions, sizes, colors } = useMemo(() => {
     const rand = new Float32Array(N * 3);

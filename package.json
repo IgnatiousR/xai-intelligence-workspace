@@ -13,6 +13,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "clsx": "^2.1.1",
+    "docx": "^9.7.1",
     "gsap": "^3.15.0",
     "motion": "^12.42.2",
     "next": "16.2.10",
@@ -35,5 +36,22 @@
   "allowScripts": {
     "sharp@0.34.5": true,
     "unrs-resolver@1.12.2": true
-  }
+  },
+  "description": "A modern landing page for an AI-powered intelligence platform, demonstrating the journey from raw data through structured analysis to actionable insights and autonomous automation. Built as a component-based Next.js 16 application.",
+  "main": "create-docx.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IgnatiousR/xai-intelligence-workspace.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/IgnatiousR/xai-intelligence-workspace/issues"
+  },
+  "homepage": "https://github.com/IgnatiousR/xai-intelligence-workspace#readme"
 }
