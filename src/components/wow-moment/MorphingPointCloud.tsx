@@ -11,12 +11,12 @@ import { useParticleSetup, useParticleFrame } from "@/hooks/useParticleSetup";
 import { ParticlePoints } from "@/components/shared/ParticlePoints";
 
 const MAX_WN = 700;
-const eps = 0.0001;
+// const eps = 0.0001;
 
 // Pre-compute random values at module scope to avoid Math.random() during render
-const rndCubeX = Float32Array.from({ length: MAX_WN }, () => Math.random());
-const rndCubeY = Float32Array.from({ length: MAX_WN }, () => Math.random());
-const rndCubeZ = Float32Array.from({ length: MAX_WN }, () => Math.random());
+// const rndCubeX = Float32Array.from({ length: MAX_WN }, () => Math.random());
+// const rndCubeY = Float32Array.from({ length: MAX_WN }, () => Math.random());
+// const rndCubeZ = Float32Array.from({ length: MAX_WN }, () => Math.random());
 const rndTorusU = Float32Array.from({ length: MAX_WN }, () => Math.random());
 const rndSize = Float32Array.from({ length: MAX_WN }, () => Math.random());
 const rndColor = Float32Array.from({ length: MAX_WN }, () => Math.random());
@@ -44,9 +44,8 @@ export default function MorphingPointCloud({
   const isMobile = useIsMobile();
   const WN = isMobile ? MOBILE.wowParticles : DESKTOP.wowParticles;
 
-  const { sphereTargets, cubeTargets, torusTargets, chaosTargets, sizes, colors } = useMemo(() => {
-    const sphere = new Float32Array(WN * 3);
-    const cube = new Float32Array(WN * 3);
+  const { gridTargets, torusTargets, chaosTargets, sizes, colors } = useMemo(() => {
+    const grid = new Float32Array(WN * 3);
     const torus = new Float32Array(WN * 3);
     const chaos = new Float32Array(WN * 3);
     const sz = new Float32Array(WN);
@@ -55,24 +54,17 @@ export default function MorphingPointCloud({
     const accentCol = new THREE.Color("#c8ff00");
     const dimCol = new THREE.Color("#ebebeb");
 
-    for (let i = 0; i < WN; i++) {
-      // Sphere (Fibonacci)
-      const phi = Math.acos(-1 + (2 * i) / WN);
-      const theta = Math.sqrt(WN * Math.PI) * phi;
-      const r = 2.3;
-      sphere[i * 3] = r * Math.cos(theta) * Math.sin(phi);
-      sphere[i * 3 + 1] = r * Math.sin(theta) * Math.sin(phi);
-      sphere[i * 3 + 2] = r * Math.cos(phi);
+    const d = Math.ceil(Math.cbrt(WN));
+    const step = 4.0 / d; // Scale grid to fit viewport (approx width 4.0)
 
-      // Cube surface
-      const cx = (rndCubeX[i] - 0.5) * 4;
-      const cy = (rndCubeY[i] - 0.5) * 4;
-      const cz = (rndCubeZ[i] - 0.5) * 4;
-      const mc = Math.max(Math.abs(cx), Math.abs(cy), Math.abs(cz), eps);
-      const s = 1.9 / mc;
-      cube[i * 3] = cx * s;
-      cube[i * 3 + 1] = cy * s;
-      cube[i * 3 + 2] = cz * s;
+    for (let i = 0; i < WN; i++) {
+      // 3D Grid
+      const ix = i % d;
+      const iy = Math.floor(i / d) % d;
+      const iz = Math.floor(i / (d * d));
+      grid[i * 3] = (ix - d / 2 + 0.5) * step;
+      grid[i * 3 + 1] = (iy - d / 2 + 0.5) * step;
+      grid[i * 3 + 2] = (iz - d / 2 + 0.5) * step;
 
       // Torus knot
       const tt = (i / WN) * Math.PI * 2 * 5;
@@ -97,8 +89,7 @@ export default function MorphingPointCloud({
       col[i * 3 + 2] = c.b;
     }
     return {
-      sphereTargets: sphere,
-      cubeTargets: cube,
+      gridTargets: grid,
       torusTargets: torus,
       chaosTargets: chaos,
       sizes: sz,
@@ -116,21 +107,16 @@ export default function MorphingPointCloud({
       const i3 = i * 3;
       let tx: number, ty: number, tz: number;
 
-      if (wowP < 0.33) {
-        const f = wowP / 0.33;
-        tx = chaosTargets[i3] + (sphereTargets[i3] - chaosTargets[i3]) * f;
-        ty = chaosTargets[i3 + 1] + (sphereTargets[i3 + 1] - chaosTargets[i3 + 1]) * f;
-        tz = chaosTargets[i3 + 2] + (sphereTargets[i3 + 2] - chaosTargets[i3 + 2]) * f;
-      } else if (wowP < 0.66) {
-        const f = (wowP - 0.33) / 0.33;
-        tx = sphereTargets[i3] + (cubeTargets[i3] - sphereTargets[i3]) * f;
-        ty = sphereTargets[i3 + 1] + (cubeTargets[i3 + 1] - sphereTargets[i3 + 1]) * f;
-        tz = sphereTargets[i3 + 2] + (cubeTargets[i3 + 2] - sphereTargets[i3 + 2]) * f;
+      if (wowP < 0.5) {
+        const f = wowP / 0.5;
+        tx = chaosTargets[i3] + (gridTargets[i3] - chaosTargets[i3]) * f;
+        ty = chaosTargets[i3 + 1] + (gridTargets[i3 + 1] - chaosTargets[i3 + 1]) * f;
+        tz = chaosTargets[i3 + 2] + (gridTargets[i3 + 2] - chaosTargets[i3 + 2]) * f;
       } else {
-        const f = (wowP - 0.66) / 0.34;
-        tx = cubeTargets[i3] + (torusTargets[i3] - cubeTargets[i3]) * f;
-        ty = cubeTargets[i3 + 1] + (torusTargets[i3 + 1] - cubeTargets[i3 + 1]) * f;
-        tz = cubeTargets[i3 + 2] + (torusTargets[i3 + 2] - cubeTargets[i3 + 2]) * f;
+        const f = (wowP - 0.5) / 0.5;
+        tx = gridTargets[i3] + (torusTargets[i3] - gridTargets[i3]) * f;
+        ty = gridTargets[i3 + 1] + (torusTargets[i3 + 1] - gridTargets[i3 + 1]) * f;
+        tz = gridTargets[i3 + 2] + (torusTargets[i3 + 2] - gridTargets[i3 + 2]) * f;
       }
 
       pos[i3] += (tx - pos[i3]) * sp;

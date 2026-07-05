@@ -9,8 +9,8 @@ interface WowOverlayProps {
 
 const STAGES = [
   { label: "Raw Data", threshold: 0 },
-  { label: "Structured Grid", threshold: 33 },
-  { label: "Intelligence Network", threshold: 66 },
+  { label: "Structured Grid", threshold: 40 },
+  { label: "Intelligence Network", threshold: 85 },
 ];
 
 export default function WowOverlay({ progress }: WowOverlayProps) {
